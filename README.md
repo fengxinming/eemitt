@@ -1,2 +1,3 @@
 # eemitt
-Event emitter for all engines.
+
+> Event emitter for all engines.

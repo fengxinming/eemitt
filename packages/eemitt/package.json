@@ -1,0 +1,32 @@
+{
+    "name": "eemitt",
+    "version": "1.0.0",
+    "description": "Event emitter for all engines.",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "sideEffects": false,
+    "scripts": {
+      "build": "npm run test && rollup -c",
+      "test": "jest --config jest.config.js"
+    },
+    "keywords": [
+      "events",
+      "emitter"
+    ],
+    "author": "fxm0016 <fxm0016@126.com>",
+    "license": "MIT",
+    "devDependencies": {
+      "@rollup/plugin-typescript": "^11.1.2",
+      "babel-jest": "^29.6.4",
+      "jest": "^29.6.4",
+      "rollup": "^3.28.0",
+      "rollup-plugin-empty": "^1.0.0",
+      "rollup-plugin-filesize": "^10.0.0",
+      "typescript": "^5.2.2"
+    },
+    "files": [
+      "dist"
+    ]
+  }
+  
