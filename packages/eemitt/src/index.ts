@@ -1,4 +1,4 @@
-import { EventTypeArgs, IEmitter, IEmitterEvent, IEventHandler, IEventHandlers, TEmitterListener } from './typings';
+import { IEventTypeArgs, IEmitter, IEmitterEvent, IEventHandler, IEventHandlers, TEmitterListener } from './typings';
 
 function createEventHandler(
   fn: TEmitterListener,
@@ -16,7 +16,7 @@ export class EmitterEvent implements IEmitterEvent {
   currentTarget: IEmitter;
   isImmediatePropagationStopped: boolean;
 
-  constructor(eventType: string | EventTypeArgs, currentTarget: IEmitter) {
+  constructor(eventType: string | IEventTypeArgs, currentTarget: IEmitter) {
     this.target = currentTarget;
     this.currentTarget = currentTarget;
     this.isImmediatePropagationStopped = true;
@@ -112,7 +112,7 @@ export function removeListeners(
 
 export function emit(
   emitter: IEmitter,
-  eventType: string | EventTypeArgs,
+  eventType: string | IEventTypeArgs,
   cb: (fn: TEmitterListener, ctx: any, evt: IEmitterEvent) => void
 ): number {
   const evt = new EmitterEvent(eventType, emitter);
@@ -172,7 +172,7 @@ export class Emitter implements IEmitter {
   }
 
   emit(
-    eventType: string | EventTypeArgs
+    eventType: string | IEventTypeArgs
   ): number {
     return emit(this, eventType, (fn, ctx, evt) => {
       fn.call(ctx, evt);

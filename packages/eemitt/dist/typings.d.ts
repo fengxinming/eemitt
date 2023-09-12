@@ -1,4 +1,4 @@
-export interface EventTypeArgs {
+export interface IEventTypeArgs {
     [key: string]: any;
     type: string;
 }
@@ -16,7 +16,7 @@ export interface IEmitter {
     once(eventName: string | string[], fn: TEmitterListener, ctx?: any): this;
     off(eventName: string | string[], fn: TEmitterListener): this;
     removeAllListeners(eventName?: string | string[]): this;
-    emit(eventType: EventTypeArgs): number;
+    emit(eventType: IEventTypeArgs): number;
 }
 export type TEmitterListener = (evt: IEmitterEvent) => any;
 export interface IEventHandler {
