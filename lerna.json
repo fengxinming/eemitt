@@ -1,5 +1,5 @@
 {
-    "npmClient": "tnpm",
+    "npmClient": "cnpm",
     "npmClientArgs": [
       "--no-lockfile"
     ],
