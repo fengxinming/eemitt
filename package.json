@@ -3,34 +3,33 @@
   "version": "1.0.0",
   "description": "Event emitter for all engines.",
   "scripts": {
-    "deps": "npm run clean && rm -rf ./node_modules && tnpm install && node ./node_modules/lerna/dist/cli.js bootstrap",
-    "clean": "tnpm install lerna@6 && node ./node_modules/lerna/dist/cli.js clean --yes",
-    "eslint": "eslint --fix --ext .js,.jsx ./",
-    "test:eemitt": "lerna run test --scope=eemitt",
-    "build:eemitt": "lerna run build --scope=eemitt",
-    "release": "npm run build:eemitt && npm publish ./packages/eemitt"
+    "deps": "npm run clean && npm install && node ./node_modules/lerna/dist/cli.js bootstrap",
+    "clean": "npm install lerna@6 && node ./node_modules/lerna/dist/cli.js clean --yes && rm -rf ./node_modules",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx,.mjs --cache --fix --ignore-path .eslintignore ./",
+    "test": "lerna run test",
+    "build": "lerna run build",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged",
+    "release": "npm publish ./packages/eemitt"
   },
-  "keywords": [
-    "events",
-    "emitter"
-  ],
   "author": "fxm0016 <fxm0016@126.com>",
   "license": "MIT",
   "devDependencies": {
-    "eslint-config-fe": "^2.0.0",
-    "@babel/core": "^7.22.11",
-    "@babel/eslint-parser": "^7.22.11",
-    "@babel/eslint-plugin": "^7.22.10",
-    "@babel/preset-env": "^7.13.10",
-    "@babel/preset-typescript": "^7.16.5",
-    "@typescript-eslint/eslint-plugin": "^6.4.1",
-    "@typescript-eslint/parser": "^6.4.1",
     "eslint": "^8.48.0",
-    "husky": "^4.3.8",
-    "lerna": "^6.6.2",
-    "lint-staged": "^13.2.1"
+    "eslint-config-fe": "^2.1.2",
+    "husky": "^8.0.0",
+    "lint-staged": "^12.5.0"
   },
   "dependencies": {
-    "lerna": "^6.6.2"
-  }
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@vitest/coverage-v8": "^1.1.3",
+    "cross-env": "^7.0.3",
+    "lerna": "^6.6.2",
+    "vite": "^5.0.11",
+    "vitest": "^1.1.3"
+  },
+  "engines": {
+    "node": "^14.18.0 || >=16.0.0"
+  },
+  "repository": "https://github.com/fengxinming/eemitt.git"
 }

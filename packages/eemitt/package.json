@@ -1,21 +1,23 @@
 {
   "name": "eemitt",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Event emitter for all engines.",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js",
+      "import": "./dist/index.es.js",
       "require": "./dist/index.js"
     }
   },
   "sideEffects": false,
   "scripts": {
-    "build": "npm run test && rollup -c",
-    "test": "jest --config jest.config.js"
+    "build": "vite build",
+    "test": "vitest run --coverage",
+    "prepublishOnly": "npm run build",
+    "release": "npm publish"
   },
   "keywords": [
     "events",
@@ -23,20 +25,10 @@
   ],
   "author": "fxm0016 <fxm0016@126.com>",
   "license": "MIT",
-  "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.2",
-    "babel-jest": "^29.6.4",
-    "jest": "^29.6.4",
-    "rollup": "^3.28.0",
-    "rollup-plugin-empty": "^1.0.0",
-    "rollup-plugin-filesize": "^10.0.0",
-    "typescript": "^5.2.2"
+  "dependencies": {
+    "tslib": "^2.6.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fengxinming/eemitt.git",
-    "directory": "packages/eemitt"
-  },
+  "repository": "https://github.com/fengxinming/eemitt.git",
   "files": [
     "dist"
   ]

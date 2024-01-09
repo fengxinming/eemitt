@@ -1,54 +1,27 @@
-export interface IEventTypeArgs {
+export interface EventArgs {
   [key: string]: any;
-
   type: string;
 }
 
-export interface IEmitterEvent {
+export interface Eventer<T> {
   [key: string]: any;
 
   type: string;
   target: any;
-  currentTarget: IEmitter;
-  isImmediatePropagationStopped: boolean;
+  currentTarget: T;
+  _isImmediatePropagationStopped: boolean;
   stopImmediatePropagation(): void;
+  startImmediatePropagation(): void;
 }
 
-export interface IEmitter {
-  _events: IEventHandlers;
+export type EventerListener<T> = (evt: Eventer<T>, meta?: any) => any;
 
-  on(
-    eventName: string | string[],
-    fn: TEmitterListener,
-    ctx?: any,
-  ): this;
-
-  once(
-    eventName: string | string[],
-    fn: TEmitterListener,
-    ctx?: any,
-  ): this;
-
-  off(
-    eventName: string | string[],
-    fn: TEmitterListener,
-  ): this;
-
-  removeAllListeners(eventName?: string | string[]): this;
-
-  emit(
-    eventType: IEventTypeArgs
-  ): number;
-}
-
-export type TEmitterListener = (evt: IEmitterEvent) => any;
-
-export interface IEventHandler {
-  fn: TEmitterListener;
+export interface EventHandler<T> {
+  fn: EventerListener<T>;
   once: boolean;
-  ctx: any;
-}
-export interface IEventHandlers {
-  [eventName: string]: IEventHandler[];
+  meta: any | undefined;
 }
 
+export interface EventHandlers<T> {
+  [eventName: string]: Array<EventHandler<T>>;
+}

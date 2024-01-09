@@ -1,4 +1,3 @@
-"use strict";
 function addListener(emitter, eventName, fn, once, meta) {
   var ehs = emitter._events[eventName];
   if (!ehs) {
@@ -129,5 +128,7 @@ var Emitter = (
     return Emitter2;
   }()
 );
-exports.Emitter = Emitter;
-exports.EmitterEventer = EmitterEventer;
+export {
+  Emitter,
+  EmitterEventer
+};

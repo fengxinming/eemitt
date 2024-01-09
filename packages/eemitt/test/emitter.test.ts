@@ -1,22 +1,19 @@
-import { Emitter, EmitterEvent } from '../src/index';
+import { expect, it, describe } from 'vitest';
+import { Emitter, EmitterEventer } from '../src/index';
 
 describe('测试事件对象', () => {
   it('测试多种方式触发事件', () => {
     const emitter1 = new Emitter();
+
     emitter1.on('testevent', (evt) => {
-      expect(evt instanceof EmitterEvent).toBe(true);
+      expect(evt instanceof EmitterEventer).toBe(true);
     });
     emitter1.on('testevent2', (evt) => {
       expect(evt.num).toBe(1);
     });
 
-    emitter1.emit('testevent', 1);
-    emitter1.emit({ type: 'testevent' });
-    emitter1.emit((evt) => {
-      evt.type = 'testevent2';
-      evt.num = 1;
-      return evt;
-    });
+    emitter1.emit({ type: 'testevent2', num: 1 });
+    emitter1.emit('testevent');
   });
 
   it('测试多事件绑定', () => {
@@ -25,7 +22,8 @@ describe('测试事件对象', () => {
     const fn = () => {
       i++;
     };
-    emitter1.on(['event1', 'event2', 'event3', null], () => {
+
+    emitter1.on(['event1', 'event2', 'event3', null as unknown as any], () => {
       i += 2;
     });
     emitter1.emit('event1'); // 2
@@ -37,13 +35,13 @@ describe('测试事件对象', () => {
     emitter1.emit('event4'); // 7
     expect(i).toBe(7);
 
-    emitter1.on(null, () => {
+    emitter1.on(null as unknown as string, () => {
       i++;
     });
     emitter1.emit('null'); // 10 触发了2个null事件
     expect(i).toBe(10);
 
-    emitter1.on('event5');
+    emitter1.on('event5', null as unknown as any);
     emitter1.emit('event5'); // 10
     expect(i).toBe(10);
 
@@ -69,7 +67,7 @@ describe('测试事件对象', () => {
     emitter1.removeAllListeners('event1');
     expect(emitter1.emit('event1')).toBe(0); // 33
 
-    emitter1.off('event2', null);
+    emitter1.off('event2', null as unknown as any);
     emitter1.emit('event2'); // 35
     expect(i).toBe(35);
 

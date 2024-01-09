@@ -1,23 +1,21 @@
-import { IEventTypeArgs, IEmitter, IEmitterEvent, IEventHandlers, TEmitterListener } from './typings';
-export declare class EmitterEvent implements IEmitterEvent {
+import { EventArgs, Eventer, EventHandlers, EventerListener } from './typings';
+export declare class EmitterEventer<T> implements Eventer<T> {
     [key: string]: any;
     type: string;
     target: any;
-    currentTarget: IEmitter;
-    isImmediatePropagationStopped: boolean;
-    constructor(eventType: string | IEventTypeArgs, currentTarget: IEmitter);
+    currentTarget: T;
+    _isImmediatePropagationStopped: boolean;
+    constructor(eventType: string | EventArgs, currentTarget: T);
     stopImmediatePropagation(): void;
+    startImmediatePropagation(): void;
 }
-export declare function addListener(emitter: IEmitter, eventName: string, fn: TEmitterListener, ctx: any, once: boolean): void;
-export declare function addListeners(emitter: IEmitter, eventName: string | string[], fn: TEmitterListener, ctx: any, once: boolean): void;
-export declare function removeListener(emitter: IEmitter, eventName: string, fn: TEmitterListener, once?: boolean): void;
-export declare function removeListeners(emitter: IEmitter, eventName: string | string[], fn: TEmitterListener): void;
-export declare function emit(emitter: IEmitter, eventType: string | IEventTypeArgs, cb: (fn: TEmitterListener, ctx: any, evt: IEmitterEvent) => void): number;
-export declare class Emitter implements IEmitter {
-    _events: IEventHandlers;
-    on(eventName: string | string[], fn: TEmitterListener, ctx?: any): this;
-    once(eventName: string | string[], fn: TEmitterListener, ctx?: any): this;
-    off(eventName: string | string[], fn: TEmitterListener): this;
-    emit(eventType: string | IEventTypeArgs): number;
+export declare class Emitter {
+    _events: EventHandlers<Emitter>;
+    on(eventName: string | string[], fn: EventerListener<this>, meta?: any): this;
+    once(eventName: string | string[], fn: EventerListener<this>, meta?: any): this;
+    off(eventName: string | string[], fn: EventerListener<this>): this;
+    emit(eventArgs: string | EventArgs): number;
     removeAllListeners(eventName?: string | string[]): this;
 }
+export * from './typings';
+export { Eventer as EmitterEvent };
