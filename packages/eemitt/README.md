@@ -2,33 +2,79 @@
 > Event emitter for all engines.
 
 ```ts
-export interface IEventTypeArgs {
-    [key: string]: any;
-    type: string;
+import { Emitter } from 'eemitt'
+
+const emitter = new Emitter()
+
+// listen to an event
+emitter.on('foo', (e, data) => console.log('foo', e, data))
+emitter.once('foo', (e, data) => console.log('foo', e, data))
+
+// fire an event
+emitter.emit('foo')
+emitter.emit({ type: 'foo', a: 'b' })
+
+// clearing all event of 'foo'
+emitter.removeAllListeners('foo')
+
+// clearing all events
+emitter.removeAllListeners()
+
+// working with handler references:
+function onFoo() {}
+emitter.on('foo', onFoo)   // listen
+emitter.off('foo', onFoo)  // unlisten
+```
+
+```ts
+export interface IEventType {
+  [key: string]: any;
+  type: string;
 }
-export interface IEmitterEvent {
-    [key: string]: any;
-    type: string;
-    target: any;
-    currentTarget: IEmitter;
-    isImmediatePropagationStopped: boolean;
-    stopImmediatePropagation(): void;
+
+export interface IEvent<T> {
+  [key: string]: any;
+
+  type: string;
+  target: any;
+  currentTarget: T;
+  isImmediatePropagationStopped: boolean;
+  stopImmediatePropagation(): void;
+  startImmediatePropagation(): void;
 }
+
 export interface IEmitter {
-    _events: IEventHandlers;
-    on(eventName: string | string[], fn: TEmitterListener, ctx?: any): this;
-    once(eventName: string | string[], fn: TEmitterListener, ctx?: any): this;
-    off(eventName: string | string[], fn: TEmitterListener): this;
-    removeAllListeners(eventName?: string | string[]): this;
-    emit(eventType: IEventTypeArgs): number;
+  on(
+    eventName: string | string[],
+    fn: IEventListener<this>,
+    meta?: any,
+  ): this;
+
+  once(
+    eventName: string | string[],
+    fn: IEventListener<this>,
+    meta?: any,
+  ): this;
+
+  off(
+    eventName: string | string[],
+    fn: IEventListener<this>,
+  ): this;
+
+  emit(eventArgs: string | IEventType): number;
+
+  removeAllListeners(eventName?: string | string[]): this;
 }
-export type TEmitterListener = (evt: IEmitterEvent) => any;
-export interface IEventHandler {
-    fn: TEmitterListener;
-    once: boolean;
-    ctx: any;
+
+export type IEventListener<T> = (evt: IEvent<T>, meta?: any) => any;
+
+export interface IEventTransport<T> {
+  fn: IEventListener<T>;
+  once: boolean;
+  meta: any | undefined;
 }
-export interface IEventHandlers {
-    [eventName: string]: IEventHandler[];
+
+export interface IEventTransports<T> {
+  [eventName: string]: Array<IEventTransport<T>>;
 }
 ```
