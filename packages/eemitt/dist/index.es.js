@@ -48,26 +48,26 @@ function removeListeners(emitter, eventName, fn) {
     removeListener(emitter, eventName, fn, false);
   }
 }
-var EmitterEventer = (
+var EEvent = (
   /** @class */
   function() {
-    function EmitterEventer2(eventType, currentTarget) {
+    function EEvent2(eventType, currentTarget) {
       this.target = currentTarget;
       this.currentTarget = currentTarget;
-      this._isImmediatePropagationStopped = true;
+      this.isImmediatePropagationStopped = true;
       if (typeof eventType === "string") {
         this.type = eventType;
       } else {
         Object.assign(this, eventType);
       }
     }
-    EmitterEventer2.prototype.stopImmediatePropagation = function() {
-      this._isImmediatePropagationStopped = false;
+    EEvent2.prototype.stopImmediatePropagation = function() {
+      this.isImmediatePropagationStopped = false;
     };
-    EmitterEventer2.prototype.startImmediatePropagation = function() {
-      this._isImmediatePropagationStopped = true;
+    EEvent2.prototype.startImmediatePropagation = function() {
+      this.isImmediatePropagationStopped = true;
     };
-    return EmitterEventer2;
+    return EEvent2;
   }()
 );
 var Emitter = (
@@ -87,7 +87,7 @@ var Emitter = (
       return this;
     };
     Emitter2.prototype.emit = function(eventArgs) {
-      var evt = new EmitterEventer(eventArgs, this);
+      var evt = new EEvent(eventArgs, this);
       var type = evt.type;
       var els = this._events[type];
       var i = 0;
@@ -100,7 +100,7 @@ var Emitter = (
           removeListener(this, type, fn, once);
         }
         fn.call(this, evt, meta);
-        if (evt._isImmediatePropagationStopped === false) {
+        if (evt.isImmediatePropagationStopped === false) {
           break;
         }
       }
@@ -129,6 +129,6 @@ var Emitter = (
   }()
 );
 export {
-  Emitter,
-  EmitterEventer
+  EEvent,
+  Emitter
 };

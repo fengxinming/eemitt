@@ -1,18 +1,18 @@
 import { addListeners, removeListener, removeListeners } from './shared';
-import { EventArgs, Eventer, EventHandlers, EventerListener, EventHandler } from './typings';
+import { IEmitter, IEvent, IEventListener, IEventTransport, IEventTransports, IEventType } from './typings';
 
-export class EmitterEventer<T> implements Eventer<T> {
+export class EEvent<T> implements IEvent<T> {
   [key: string]: any;
 
   type!: string;
   target: any;
   currentTarget: T;
-  _isImmediatePropagationStopped: boolean;
+  isImmediatePropagationStopped: boolean;
 
-  constructor(eventType: string | EventArgs, currentTarget: T) {
+  constructor(eventType: string | IEventType, currentTarget: T) {
     this.target = currentTarget;
     this.currentTarget = currentTarget;
-    this._isImmediatePropagationStopped = true;
+    this.isImmediatePropagationStopped = true;
 
     if (typeof eventType === 'string') {
       this.type = eventType;
@@ -23,20 +23,20 @@ export class EmitterEventer<T> implements Eventer<T> {
   }
 
   stopImmediatePropagation(): void {
-    this._isImmediatePropagationStopped = false;
+    this.isImmediatePropagationStopped = false;
   }
 
   startImmediatePropagation(): void {
-    this._isImmediatePropagationStopped = true;
+    this.isImmediatePropagationStopped = true;
   }
 }
 
-export class Emitter {
-  _events: EventHandlers<Emitter> = Object.create(null);
+export class Emitter implements IEmitter {
+  _events: IEventTransports<Emitter> = Object.create(null);
 
   on(
     eventName: string | string[],
-    fn: EventerListener<this>,
+    fn: IEventListener<this>,
     meta?: any,
   ): this {
     return addListeners(this, eventName, fn, false, meta);
@@ -44,7 +44,7 @@ export class Emitter {
 
   once(
     eventName: string | string[],
-    fn: EventerListener<this>,
+    fn: IEventListener<this>,
     meta?: any,
   ): this {
     return addListeners(this, eventName, fn, true, meta);
@@ -52,17 +52,17 @@ export class Emitter {
 
   off(
     eventName: string | string[],
-    fn: EventerListener<this>,
+    fn: IEventListener<this>,
   ): this {
     removeListeners(this, eventName, fn);
     return this;
   }
 
-  emit(eventArgs: string | EventArgs): number {
-    const evt = new EmitterEventer(eventArgs, this);
+  emit(eventArgs: string | IEventType): number {
+    const evt = new EEvent(eventArgs, this);
     const { type } = evt;
 
-    const els = this._events[type] as Array<EventHandler<this>>;
+    const els = this._events[type] as Array<IEventTransport<this>>;
     let i = 0;
 
     if (!els) {
@@ -81,7 +81,7 @@ export class Emitter {
       fn.call(this, evt, meta);
 
       // 试图阻止当前事件广播
-      if (evt._isImmediatePropagationStopped === false) {
+      if (evt.isImmediatePropagationStopped === false) {
         break;
       }
     }
@@ -110,6 +110,3 @@ export class Emitter {
 }
 
 export * from './typings';
-export {
-  Eventer as EmitterEvent
-};

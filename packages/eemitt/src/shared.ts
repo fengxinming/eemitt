@@ -1,13 +1,13 @@
-import { EventerListener, EventHandler } from './typings';
+import { IEventListener, IEventTransport } from './typings';
 
 function addListener<T>(
   emitter: any,
   eventName: string,
-  fn: EventerListener<T>,
+  fn: IEventListener<T>,
   once: boolean,
   meta?: any
 ): void {
-  let ehs = emitter._events[eventName] as Array<EventHandler<T>>;
+  let ehs = emitter._events[eventName] as Array<IEventTransport<T>>;
   if (!ehs) {
     ehs = [];
     emitter._events[eventName] = ehs;
@@ -23,7 +23,7 @@ function addListener<T>(
 export function addListeners<T>(
   emitter: T,
   eventName: string | string[],
-  fn: EventerListener<T>,
+  fn: IEventListener<T>,
   once: boolean,
   meta?: any
 ): any {
@@ -45,10 +45,10 @@ export function addListeners<T>(
 export function removeListener<T>(
   emitter: any,
   eventName: string,
-  fn: EventerListener<T>,
+  fn: IEventListener<T>,
   once?: boolean
 ): void {
-  const listeners = emitter._events[eventName] as Array<EventHandler<T>>;
+  const listeners = emitter._events[eventName] as Array<IEventTransport<T>>;
   if (!listeners) {
     return;
   }
@@ -65,7 +65,7 @@ export function removeListener<T>(
 export function removeListeners<T>(
   emitter: T,
   eventName: string | string[],
-  fn: EventerListener<T>
+  fn: IEventListener<T>
 ): void {
   if (Array.isArray(eventName)) {
     eventName.forEach((n) => {

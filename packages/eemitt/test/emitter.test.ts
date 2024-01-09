@@ -1,12 +1,12 @@
 import { expect, it, describe } from 'vitest';
-import { Emitter, EmitterEventer } from '../src/index';
+import { Emitter, EEvent } from '../src/index';
 
 describe('测试事件对象', () => {
   it('测试多种方式触发事件', () => {
     const emitter1 = new Emitter();
 
     emitter1.on('testevent', (evt) => {
-      expect(evt instanceof EmitterEventer).toBe(true);
+      expect(evt instanceof EEvent).toBe(true);
     });
     emitter1.on('testevent2', (evt) => {
       expect(evt.num).toBe(1);
