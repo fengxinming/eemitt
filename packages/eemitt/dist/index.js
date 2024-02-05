@@ -1,5 +1,5 @@
 "use strict";
-function addListener(emitter, eventName, fn, once, meta) {
+function addListener(emitter, eventName, fn, once, ctx) {
   var ehs = emitter._events[eventName];
   if (!ehs) {
     ehs = [];
@@ -10,19 +10,19 @@ function addListener(emitter, eventName, fn, once, meta) {
     console.warn('Expect a function to bind "'.concat(eventName, '" event, but got ').concat(type, " ").concat(fn));
     return;
   }
-  ehs[ehs.length] = { fn, once, meta };
+  ehs[ehs.length] = { fn, once, ctx };
 }
-function addListeners(emitter, eventName, fn, once, meta) {
+function addListeners(emitter, eventName, fn, once, ctx) {
   if (Array.isArray(eventName)) {
     eventName.forEach(function(n) {
       var type = typeof n;
       if (type !== "string") {
         console.warn("Expect a string as event name, but got ".concat(type, " ").concat(n));
       }
-      addListener(emitter, n, fn, once, meta);
+      addListener(emitter, n, fn, once, ctx);
     });
   } else {
-    addListener(emitter, eventName, fn, once, meta);
+    addListener(emitter, eventName, fn, once, ctx);
   }
   return emitter;
 }
@@ -77,30 +77,31 @@ var Emitter = (
     function Emitter2() {
       this._events = /* @__PURE__ */ Object.create(null);
     }
-    Emitter2.prototype.on = function(eventName, fn, meta) {
-      return addListeners(this, eventName, fn, false, meta);
+    Emitter2.prototype.on = function(eventName, fn, ctx) {
+      return addListeners(this, eventName, fn, false, ctx);
     };
-    Emitter2.prototype.once = function(eventName, fn, meta) {
-      return addListeners(this, eventName, fn, true, meta);
+    Emitter2.prototype.once = function(eventName, fn, ctx) {
+      return addListeners(this, eventName, fn, true, ctx);
     };
     Emitter2.prototype.off = function(eventName, fn) {
       removeListeners(this, eventName, fn);
       return this;
     };
-    Emitter2.prototype.emit = function(eventArgs) {
-      var evt = new EEvent(eventArgs, this);
+    Emitter2.prototype.emit = function(eventType) {
+      var evt = new EEvent(eventType, this);
       var type = evt.type;
-      var els = this._events[type];
+      var currentListeners = this._events[type];
       var i = 0;
-      if (!els) {
+      if (!currentListeners) {
         return i;
       }
-      for (var len = els.length; i < len; i++) {
-        var _a = els[i], fn = _a.fn, once = _a.once, meta = _a.meta;
+      var duplicates = currentListeners.slice(0);
+      for (var len = duplicates.length; i < len; i++) {
+        var _a = duplicates[i], fn = _a.fn, once = _a.once, ctx = _a.ctx;
         if (once) {
           removeListener(this, type, fn, once);
         }
-        fn.call(this, evt, meta);
+        fn.call(ctx === void 0 ? this : ctx, evt);
         if (evt.isImmediatePropagationStopped === false) {
           break;
         }

@@ -1,6 +1,6 @@
 {
   "name": "emitter",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Event emitter for all engines.",
   "scripts": {
     "deps": "npm run clean && npm install && node ./node_modules/lerna/dist/cli.js bootstrap",
@@ -23,13 +23,13 @@
   "dependencies": {
     "@rollup/plugin-typescript": "^11.1.5",
     "@vitest/coverage-v8": "^1.1.3",
-    "cross-env": "^7.0.3",
     "lerna": "^6.6.2",
     "vite": "^5.0.11",
+    "vite-plugin-external": "^4.3.0",
     "vitest": "^1.1.3"
   },
   "engines": {
-    "node": "^14.18.0 || >=16.0.0"
+    "node": "^18.0.0"
   },
   "repository": "https://github.com/fengxinming/eemitt.git"
 }

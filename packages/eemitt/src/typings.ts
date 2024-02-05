@@ -3,33 +3,35 @@ export interface IEventType {
   type: string;
 }
 
-export interface IEvent<T> {
+export interface IEvent<T = unknown, U = IEmitter> {
   [key: string]: any;
 
   type: string;
-  target: any;
-  currentTarget: T;
+  target: T;
+  currentTarget: U;
   isImmediatePropagationStopped: boolean;
   stopImmediatePropagation(): void;
   startImmediatePropagation(): void;
 }
 
 export interface IEmitter {
+  _events: IEventTransports;
+
   on(
     eventName: string | string[],
-    fn: IEventListener<this>,
-    meta?: any,
+    fn: IEventListener,
+    ctx?: any,
   ): this;
 
   once(
     eventName: string | string[],
-    fn: IEventListener<this>,
-    meta?: any,
+    fn: IEventListener,
+    ctx?: any,
   ): this;
 
   off(
     eventName: string | string[],
-    fn: IEventListener<this>,
+    fn: IEventListener,
   ): this;
 
   emit(eventArgs: string | IEventType): number;
@@ -37,14 +39,14 @@ export interface IEmitter {
   removeAllListeners(eventName?: string | string[]): this;
 }
 
-export type IEventListener<T> = (evt: IEvent<T>, meta?: any) => any;
+export type IEventListener<T = unknown, U = IEmitter> = (evt: IEvent<T, U>) => any;
 
-export interface IEventTransport<T> {
-  fn: IEventListener<T>;
+export interface IEventTransport {
+  fn: IEventListener;
   once: boolean;
-  meta: any | undefined;
+  ctx: any;
 }
 
-export interface IEventTransports<T> {
-  [eventName: string]: Array<IEventTransport<T>>;
+export interface IEventTransports {
+  [eventName: string]: IEventTransport[];
 }

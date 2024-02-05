@@ -1,13 +1,13 @@
-import { IEventListener, IEventTransport } from './typings';
+import { IEmitter, IEventListener, IEventTransport } from './typings';
 
 function addListener<T>(
-  emitter: any,
+  emitter: IEmitter,
   eventName: string,
-  fn: IEventListener<T>,
+  fn: IEventListener,
   once: boolean,
-  meta?: any
+  ctx?: T
 ): void {
-  let ehs = emitter._events[eventName] as Array<IEventTransport<T>>;
+  let ehs = emitter._events[eventName];
   if (!ehs) {
     ehs = [];
     emitter._events[eventName] = ehs;
@@ -17,15 +17,15 @@ function addListener<T>(
     console.warn(`Expect a function to bind "${eventName}" event, but got ${type} ${fn}`);
     return;
   }
-  ehs[ehs.length] = { fn, once, meta };
+  ehs[ehs.length] = { fn, once, ctx };
 }
 
 export function addListeners<T>(
-  emitter: T,
+  emitter: IEmitter,
   eventName: string | string[],
-  fn: IEventListener<T>,
+  fn: IEventListener<any, any>,
   once: boolean,
-  meta?: any
+  ctx?: T
 ): any {
   if (Array.isArray(eventName)) {
     eventName.forEach((n) => {
@@ -33,22 +33,22 @@ export function addListeners<T>(
       if (type !== 'string') {
         console.warn(`Expect a string as event name, but got ${type} ${n}`);
       }
-      addListener(emitter, n, fn, once, meta);
+      addListener(emitter, n, fn, once, ctx);
     });
   }
   else {
-    addListener(emitter, eventName, fn, once, meta);
+    addListener(emitter, eventName, fn, once, ctx);
   }
   return emitter;
 }
 
-export function removeListener<T>(
+export function removeListener(
   emitter: any,
   eventName: string,
-  fn: IEventListener<T>,
+  fn: IEventListener,
   once?: boolean
 ): void {
-  const listeners = emitter._events[eventName] as Array<IEventTransport<T>>;
+  const listeners = emitter._events[eventName] as IEventTransport[];
   if (!listeners) {
     return;
   }
@@ -62,10 +62,10 @@ export function removeListener<T>(
   });
 }
 
-export function removeListeners<T>(
-  emitter: T,
+export function removeListeners(
+  emitter: IEmitter,
   eventName: string | string[],
-  fn: IEventListener<T>
+  fn: IEventListener<any, any>
 ): void {
   if (Array.isArray(eventName)) {
     eventName.forEach((n) => {
@@ -76,4 +76,3 @@ export function removeListeners<T>(
     removeListener(emitter, eventName, fn, false);
   }
 }
-

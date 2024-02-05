@@ -1,6 +1,6 @@
 {
   "name": "eemitt",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Event emitter for all engines.",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
@@ -16,6 +16,7 @@
   "scripts": {
     "build": "vite build",
     "test": "vitest run --coverage",
+    "prepublishOnly": "npm run build",
     "release": "npm publish"
   },
   "keywords": [

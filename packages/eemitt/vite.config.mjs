@@ -1,13 +1,15 @@
 import { defineConfig } from 'vite';
 import typescript from '@rollup/plugin-typescript';
+import vitePluginExternal from 'vite-plugin-external';
 import pkg from './package.json';
-
-const externals = Object.keys(pkg.dependencies).map((n) => new RegExp(`^${n}/?`));
 
 export default defineConfig({
   plugins: [
     typescript({
       tsconfig: './tsconfig.build.json'
+    }),
+    vitePluginExternal({
+      externalizeDeps: Object.keys(pkg.dependencies)
     })
   ],
   build: {
@@ -18,7 +20,6 @@ export default defineConfig({
       fileName: (format) => `index${format === 'cjs' ? '' : `.${format}`}.js`
     },
     rollupOptions: {
-      external: externals,
       output: {
         generatedCode: 'es5'
       }

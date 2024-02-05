@@ -1,7 +1,16 @@
 # eemitt
+
 > Event emitter for all engines.
 
-```ts
+## Installation
+
+```bash
+npm i eemitt --save
+```
+
+## Usage
+
+```js
 import { Emitter } from 'eemitt'
 
 const emitter = new Emitter()
@@ -26,55 +35,55 @@ emitter.on('foo', onFoo)   // listen
 emitter.off('foo', onFoo)  // unlisten
 ```
 
+## Types
+
 ```ts
 export interface IEventType {
-  [key: string]: any;
-  type: string;
+    [key: string]: any;
+    type: string;
 }
-
-export interface IEvent<T> {
-  [key: string]: any;
-
-  type: string;
-  target: any;
-  currentTarget: T;
-  isImmediatePropagationStopped: boolean;
-  stopImmediatePropagation(): void;
-  startImmediatePropagation(): void;
+export interface IEvent<T = unknown, U = IEmitter> {
+    [key: string]: any;
+    type: string;
+    target: T;
+    currentTarget: U;
+    isImmediatePropagationStopped: boolean;
+    stopImmediatePropagation(): void;
+    startImmediatePropagation(): void;
 }
-
 export interface IEmitter {
-  on(
-    eventName: string | string[],
-    fn: IEventListener<this>,
-    meta?: any,
-  ): this;
-
-  once(
-    eventName: string | string[],
-    fn: IEventListener<this>,
-    meta?: any,
-  ): this;
-
-  off(
-    eventName: string | string[],
-    fn: IEventListener<this>,
-  ): this;
-
-  emit(eventArgs: string | IEventType): number;
-
-  removeAllListeners(eventName?: string | string[]): this;
+    _events: IEventTransports;
+    on(eventName: string | string[], fn: IEventListener, ctx?: any): this;
+    once(eventName: string | string[], fn: IEventListener, ctx?: any): this;
+    off(eventName: string | string[], fn: IEventListener): this;
+    emit(eventArgs: string | IEventType): number;
+    removeAllListeners(eventName?: string | string[]): this;
 }
-
-export type IEventListener<T> = (evt: IEvent<T>, meta?: any) => any;
-
-export interface IEventTransport<T> {
-  fn: IEventListener<T>;
-  once: boolean;
-  meta: any | undefined;
+export type IEventListener<T = unknown, U = IEmitter> = (evt: IEvent<T, U>) => any;
+export interface IEventTransport {
+    fn: IEventListener;
+    once: boolean;
+    ctx: any;
 }
-
-export interface IEventTransports<T> {
-  [eventName: string]: Array<IEventTransport<T>>;
+export interface IEventTransports {
+    [eventName: string]: IEventTransport[];
+}
+export declare class EEvent<T = unknown, U = Emitter> implements IEvent<T, U> {
+    [key: string]: any;
+    type: string;
+    target: T;
+    currentTarget: U;
+    isImmediatePropagationStopped: boolean;
+    constructor(eventType: string | IEventType, currentTarget: U);
+    stopImmediatePropagation(): void;
+    startImmediatePropagation(): void;
+}
+export declare class Emitter implements IEmitter {
+    _events: IEventTransports;
+    on(eventName: string | string[], fn: IEventListener<unknown, this>, ctx?: any): this;
+    once(eventName: string | string[], fn: IEventListener<unknown, this>, ctx?: any): this;
+    off(eventName: string | string[], fn: IEventListener<unknown, this>): this;
+    emit(eventType: string | IEventType): number;
+    removeAllListeners(eventName?: string | string[]): this;
 }
 ```

@@ -1,16 +1,16 @@
 import { addListeners, removeListener, removeListeners } from './shared';
-import { IEmitter, IEvent, IEventListener, IEventTransport, IEventTransports, IEventType } from './typings';
+import { IEmitter, IEvent, IEventListener, IEventTransports, IEventType } from './typings';
 
-export class EEvent<T> implements IEvent<T> {
+export class EEvent<T = unknown, U = Emitter> implements IEvent<T, U> {
   [key: string]: any;
 
   type!: string;
-  target: any;
-  currentTarget: T;
+  target: T;
+  currentTarget: U;
   isImmediatePropagationStopped: boolean;
 
-  constructor(eventType: string | IEventType, currentTarget: T) {
-    this.target = currentTarget;
+  constructor(eventType: string | IEventType, currentTarget: U) {
+    this.target = currentTarget as any;
     this.currentTarget = currentTarget;
     this.isImmediatePropagationStopped = true;
 
@@ -32,45 +32,46 @@ export class EEvent<T> implements IEvent<T> {
 }
 
 export class Emitter implements IEmitter {
-  _events: IEventTransports<Emitter> = Object.create(null);
+  _events: IEventTransports = Object.create(null);
 
   on(
     eventName: string | string[],
-    fn: IEventListener<this>,
-    meta?: any,
+    fn: IEventListener<unknown, this>,
+    ctx?: any,
   ): this {
-    return addListeners(this, eventName, fn, false, meta);
+    return addListeners(this, eventName, fn, false, ctx);
   }
 
   once(
     eventName: string | string[],
-    fn: IEventListener<this>,
-    meta?: any,
+    fn: IEventListener<unknown, this>,
+    ctx?: any,
   ): this {
-    return addListeners(this, eventName, fn, true, meta);
+    return addListeners(this, eventName, fn, true, ctx);
   }
 
   off(
     eventName: string | string[],
-    fn: IEventListener<this>,
+    fn: IEventListener<unknown, this>,
   ): this {
     removeListeners(this, eventName, fn);
     return this;
   }
 
-  emit(eventArgs: string | IEventType): number {
-    const evt = new EEvent(eventArgs, this);
+  emit(eventType: string | IEventType): number {
+    const evt = new EEvent(eventType, this);
     const { type } = evt;
 
-    const els = this._events[type] as Array<IEventTransport<this>>;
+    const currentListeners = this._events[type];
     let i = 0;
 
-    if (!els) {
+    if (!currentListeners) {
       return i;
     }
 
-    for (const len = els.length; i < len; i++) {
-      const { fn, once, meta } = els[i];
+    const duplicates = currentListeners.slice(0);
+    for (const len = duplicates.length; i < len; i++) {
+      const { fn, once, ctx } = duplicates[i];
 
       // 只执行一次的情况
       if (once) {
@@ -78,7 +79,7 @@ export class Emitter implements IEmitter {
       }
 
       // 执行事件回调函数
-      fn.call(this, evt, meta);
+      fn.call(ctx === void 0 ? this : ctx, evt);
 
       // 试图阻止当前事件广播
       if (evt.isImmediatePropagationStopped === false) {
