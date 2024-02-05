@@ -16,7 +16,6 @@
   "scripts": {
     "build": "vite build",
     "test": "vitest run --coverage",
-    "prepublishOnly": "npm run build",
     "release": "npm publish"
   },
   "keywords": [
